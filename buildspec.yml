@@ -6,19 +6,14 @@ phases:
       - echo "Iniciando a fase de pre-build..."
       - echo Fazendo login no ECR...      
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654346517.dkr.ecr.us-east-1.amazonaws.com
-      - REPOSITORY_URI=654654346517.dkr.ecr.us-east-1.amazonaws.com
-      - echo "REPOSITORY_URI - $REPOSITORY_URI"
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - echo "$CODEBUILD_RESOLVED_SOURCE_VERSION"
-      - echo "$COMMIT_HASH"
-      - IMAGE_TAG=${COMMIT_HASH:=latest}
-      - echo "$IMAGE_TAG"
+
   build:
     commands:
       - echo Build iniciado em `date`
       - echo Gerando imagem do Container...
-      - docker build -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t repository_glpi .
+      - docker tag repository_glpi:latest 654654346517.dkr.ecr.us-east-1.amazonaws.com/repository_glpi:latest
+
   post_build:
     commands:
       - echo Build finalizado com sucesso em `date`
