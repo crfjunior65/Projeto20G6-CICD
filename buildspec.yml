@@ -1,21 +1,37 @@
 version: 0.2
 
+
 phases:
   pre_build:
     commands:
-      - echo "Iniciando a fase de pre-build..."
-      - echo Fazendo login no ECR...      
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654346517.dkr.ecr.us-east-1.amazonaws.com 
- 
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 08764211481843.dkr.ecr.us-west-2.amazonaws.com
+      aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654346517.dkr.ecr.us-east-1.amazonaws.com
+      - REPOSITORY_URI=654654346517.dkr.ecr.us-east-1.amazonaws.com/repository_glpi
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
   build:
     commands:
-      - echo Build iniciado em `date`
-      - echo Gerando imagem do Container...
-      - docker build -t repository_glpi .
-      - docker tag repository_glpi:latest 654654346517.dkr.ecr.us-east-1.amazonaws.com/repository_glpi:latest
-
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:latest
   post_build:
     commands:
-      - echo Build finalizado com sucesso em `date`
-      - echo Fazendo push da imagem para o ECR...
-      - docker push 654654346517.dkr.ecr.us-east-1.amazonaws.com/repository_glpi:latest
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - echo Writing image definitions file...
+      - printf '[{"name":"repository_glpi","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
+      - cat imagedefinitions.json 
+artifacts:
+    files: 
+      - imagedefinitions.json
+
+
+#Comentario 
+#REPOSITORY_URI=654654346517.dkr.ecr.us-east-1.amazonaws.com/repository_glpi
+# Nome do Repositorio: repository_glpi
+#printf '[{"name":"repository_glpi","imageUri":"%s"}]' $REPOSITORY_URI:latest > imagedefinitions.json
+# Nome do Repositorio: repository_glpi(Eu Acho)
