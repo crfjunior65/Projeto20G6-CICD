@@ -19,9 +19,3 @@ phases:
       - echo Build finalizado com sucesso em `date`
       - echo Fazendo push da imagem para o ECR...
       - docker push 654654346517.dkr.ecr.us-east-1.amazonaws.com/repository_glpi:latest
-      - echo "docker push $REPOSITORY_URI:latest"
-      - echo "docker push $REPOSITORY_URI:$IMAGE_TAG"
-      - echo Gerando artefato da imagem para o ECS
-      - printf '[{"name":"glpi","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-artifacts:
-  files: imagedefinitions.json
