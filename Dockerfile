@@ -92,12 +92,14 @@ ARG DB_HOST
 ARG DB_NAME
 ARG DB_USER
 ARG DB_PASSWORD
+ARG DB_PORT
 
 # Copiar e configurar o arquivo de configuração do banco de dados
 RUN sed -i "s/YOUR_DB_HOST/$DB_HOST/g" /tmp/config_db.php
 RUN sed -i "s/YOUR_DB_USER/$DB_USER/g" /tmp/config_db.php
 RUN sed -i "s/YOUR_DB_PASSWORD/$DB_PASSWORD/g" /tmp/config_db.php
 RUN sed -i "s/YOUR_DB_NAME/$DB_NAME/g" /tmp/config_db.php
+RUN sed -i "s/YOUR_DB_PORT/$DB_PORT/g" /tmp/config_db.php
 
 ## ---------------------------------------------------------------------------------------------------------------------
 ## Incialização entrypoint
